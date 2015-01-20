@@ -1,17 +1,24 @@
-    var c = document.getElementById("canvas");
-    var ctx = c.getContext("2d");
+    var
+        c = document.getElementById("canvas"),
+        ctx = c.getContext("2d"),
 
-    var canvasWidth = $("#canvas").width();
-    var canvasHeight = $("#canvas").height();
+        canvasWidth = $("#canvas").width(),
+        canvasHeight = $("#canvas").height(),
+        background = new Image();
 
-function Tile(x, y, size, ctx){
+background.src = "./grass_background.jpg";
+background.onload = function(){
+    ctx.drawImage(background,0,0);
+}
+
+function Tile(x, y, size, ctx, color){
         this.x = x;
         this.y = y;
         this.size = size;
         this.ctx = ctx;
 
         this.print = function(){
-            ctx.fillStyle = "red";
+            ctx.fillStyle = color;
             ctx.fillRect(this.x * this.size,this.y * this.size, this.size, this.size);
         }
     }
@@ -20,7 +27,7 @@ var food = (function() {
    var place = function() {
         var x = Math.floor(Math.random() * canvasWidth / 10);
         var y = Math.floor(Math.random() * canvasHeight / 10);
-        this.position = new Tile(x, y, 10, ctx, "green");
+        this.position = new Tile(x, y, 10, ctx, "yellow");
     };
    var print = function() {
         this.position.print();
@@ -34,10 +41,10 @@ var food = (function() {
 
     var snake = (function(){
         var tail = [],
-            head = new Tile(4, 0, 10, ctx);
+            head = new Tile(4, 0, 10, ctx, "red");
 
         [1,2,3].forEach(function(i){
-            tail.push(new Tile(i, 0, 10, ctx));
+            tail.push(new Tile(i, 0, 10, ctx, "red"));
         })
 
         tail.push(head);
@@ -50,16 +57,16 @@ var food = (function() {
 
         this.move = function(dir){
             if (dir === "right"){
-                var new_head = new Tile(head.x + 1, head.y, 10, ctx);
+                var new_head = new Tile(head.x + 1, head.y, 10, ctx, "red");
             }
             if (dir === "left"){
-                var new_head = new Tile(head.x - 1, head.y, 10, ctx);
+                var new_head = new Tile(head.x - 1, head.y, 10, ctx, "red");
             }
             if (dir === "up"){
-                var new_head = new Tile(head.x, head.y - 1, 10, ctx);
+                var new_head = new Tile(head.x, head.y - 1, 10, ctx, "red");
             }
             if (dir === "down"){
-                var new_head = new Tile(head.x, head.y + 1, 10, ctx);
+                var new_head = new Tile(head.x, head.y + 1, 10, ctx, "red");
             }
             tail.push(new_head);
             tail.shift();
@@ -103,14 +110,10 @@ var food = (function() {
         }
     })
 
-
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+    ctx.drawImage(background,0,0);
     snake.move(direction);
     snake.tryEat();
     snake.print();
 
     food.print();
-
-
-
 }, 100);
